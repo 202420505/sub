@@ -1,6 +1,6 @@
 [
   {
-    "subdomain": "Q",
+    "subdomain": "example",
     "cname": "202420505.github.io/sub",
     "ttl": 120,
     "proxied": false

@@ -1,6 +1,6 @@
 [
   {
-    "subdomain": "tclock",
+    "subdomain": "TCLOCK",
     "cname": "treeentertainment.github.io/CLOCK",
     "ttl": 120,
     "proxied": false

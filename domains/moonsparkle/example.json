@@ -1,1 +1,6 @@
-
+{
+  "type": "CNAME",
+  "subdomain": "TCLOCK",
+  "domain": "moonsparkle.tech",
+  "target": "treeentertainment.github.io/clock"
+}

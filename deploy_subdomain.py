@@ -5,20 +5,28 @@ import requests
 # Cloudflare API 정보를 담은 URL
 CF_API_URL = "https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records"
 
-# Cloudflare API 토큰을 환경변수에서 가져옴
-CF_API_TOKEN = os.getenv('CLOUDFLARE_API_TOKEN')
+# Cloudflare 환경변수에서 API 키와 이메일을 가져옴
+CLOUDFLARE_EMAIL = os.getenv('CLOUDFLARE_EMAIL')  # Your Cloudflare account email
+CLOUDFLARE_API_KEY = os.getenv('CLOUDFLARE_API_KEY')  # Your Global API Key
 
 HEADERS = {
-    'Authorization': f'Bearer {CF_API_TOKEN}',
+    'X-Auth-Email': CLOUDFLARE_EMAIL,
+    'X-Auth-Key': CLOUDFLARE_API_KEY,
     'Content-Type': 'application/json'
 }
 
 def get_zone_id(domain_name):
     """ Cloudflare에서 도메인 zone ID를 가져오는 함수 """
+    print(f"Fetching Zone ID for {domain_name}")
+    print(f"Using email: {CLOUDFLARE_EMAIL[:4]}...")  # To verify it's being picked up
+    
     response = requests.get(
         f'https://api.cloudflare.com/client/v4/zones?name={domain_name}',
         headers=HEADERS
     )
+    print(f"Response Status Code: {response.status_code}")
+    print(f"Response Body: {response.text}")
+    
     data = response.json()
     return data['result'][0]['id'] if data['success'] else None
 
@@ -32,6 +40,8 @@ def create_cname_record(zone_id, subdomain_name, cname_value, ttl, proxied):
         'proxied': proxied
     }
     response = requests.post(CF_API_URL.format(zone_id=zone_id), headers=HEADERS, json=data)
+    print(f"Creating CNAME for {subdomain_name}: {response.status_code}")
+    print(f"Response Body: {response.text}")
     return response.json()
 
 def apply_subdomains_from_folder(domain, folder_path):

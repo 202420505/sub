@@ -10,30 +10,30 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Read JSON files from domains folder
-        id: read-json
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Check if PR is merged
+        if: github.event.pull_request.merged == true
+        run: echo "PR is merged."
+
+      - name: Read JSON files from domains folder and add DNS records to Cloudflare
+        if: github.event.pull_request.merged == true
         run: |
           for json_file in $(find ./domains -name '*.json'); do
-            SUBDOMAIN=$(jq -r '.subdomain' $json_file)
-            DOMAIN=$(jq -r '.domain' $json_file)
-            TARGET=$(jq -r '.target' $json_file)
-            TYPE=$(jq -r '.type' $json_file)
+            SUBDOMAIN=$(jq -r '.subdomain' "$json_file")
+            DOMAIN=$(jq -r '.domain' "$json_file")
+            TARGET=$(jq -r '.target' "$json_file")
+            TYPE=$(jq -r '.type' "$json_file")
 
             # Add DNS record to Cloudflare
-            echo "Adding DNS record for $SUBDOMAIN.$DOMAIN with $TYPE"
+            echo "Adding DNS record for ${SUBDOMAIN}.${DOMAIN} with ${TYPE}"
             curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/dns_records" \
-            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            --data '{
-              "type": "'$TYPE'",
-              "name": "'$SUBDOMAIN.$DOMAIN'",
-              "content": "'$TARGET'",
-              "ttl": 120,
-              "proxied": false
-            }'
+              -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              --data "{\"type\":\"$TYPE\",\"name\":\"$SUBDOMAIN.$DOMAIN\",\"content\":\"$TARGET\",\"ttl\":120,\"proxied\":false}"
           done

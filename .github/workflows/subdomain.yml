@@ -30,9 +30,19 @@ jobs:
             TARGET=$(jq -r '.target' "$json_file")
             TYPE=$(jq -r '.type' "$json_file")
 
+            # Zone ID 선택 로직
+            if [ "$DOMAIN" == "moontree.me" ]; then
+              ZONE_ID="${{ secrets.CLOUDFLARE_ZONE_ID_FIRST }}"
+            elif [ "$DOMAIN" == "moonsparkle.tech" ]; then
+              ZONE_ID="${{ secrets.CLOUDFLARE_ZONE_ID_SECOND }}"
+            else
+              echo "Unknown domain $DOMAIN. Skipping..."
+              continue
+            fi
+
             # Add DNS record to Cloudflare
             echo "Adding DNS record for ${SUBDOMAIN}.${DOMAIN} with ${TYPE}"
-            curl -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/dns_records" \
+            curl -X POST "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records" \
               -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
               -H "Content-Type: application/json" \
               --data "{\"type\":\"$TYPE\",\"name\":\"$SUBDOMAIN.$DOMAIN\",\"content\":\"$TARGET\",\"ttl\":120,\"proxied\":false}"

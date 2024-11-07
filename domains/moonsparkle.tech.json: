@@ -1,0 +1,10 @@
+{
+  "domain": "moonsparkle.tech",
+  "subdomains": [
+    {
+      "name": "example",
+      "github_pages_url": "202420505.github.io",
+      "repo": "202420505/sub"
+    }
+  ]
+}

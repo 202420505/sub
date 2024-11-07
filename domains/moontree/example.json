@@ -1,6 +1,0 @@
-{
-  "type": "CNAME",
-  "subdomain": "example",
-  "domain": "moontree.me",
-  "target": "treeentertainment.github.io/CLOCK"
-}

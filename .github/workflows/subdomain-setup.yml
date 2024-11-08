@@ -1,8 +1,9 @@
 name: Subdomain Setup
 
 on:
-  pull_request:
-    types: [opened, synchronize]
+  push:
+    branches:
+      - main  # Change this to the branch you want to monitor for merges
     paths:
       - 'domains/*.json'
 
@@ -10,21 +11,21 @@ jobs:
   setup-subdomains:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2  # Consider checking for newer versions
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v2  # Check if a newer version is available
         with:
-          python-version: '3.x'
+          python-version: '3.x'  # Specify exact version if needed
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests
+          pip install requests  # Add other dependencies if required
 
       - name: Process subdomain configurations
         env:
           CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python .github/scripts/setup_subdomains.py
+          python .github/scripts/setup_subdomains.py  # Ensure this path is correct and script is executable

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>페이지 없음</title>
+    <script>
+        // DNS_PROBE_FINISHED_NXDOMAIN 오류 감지
+        if (window.performance && window.performance.navigation.type === 4) {
+            document.addEventListener('DOMContentLoaded', function() {
+                document.body.innerHTML = `
+                    <h1>DNS_PROBE_FINISHED_NXDOMAIN 오류가 발생했습니다</h1>
+                    <p>이 오류는 도메인 이름을 확인할 수 없을 때 발생합니다.</p>
+                    <p>다음을 시도해 보세요:</p>
+                    <ul>
+                        <li>도메인을 등록하세요</li>
+                        <li>DNS 설정을 확인하세요.</li>
+                        <li>브라우저 캐시를 지우고 다시 시도하세요.</li>
+                    </ul>
+                    <p><a href="/">홈페이지로 돌아가기</a></p>
+                `;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>발견된 도메인이 없습니다.</h1>
+    <p>등록하려면 <a href="https://github.com/202420505/sub">여기를 클릭하세요</a></p>
+    <p><a href="/">홈페이지로 돌아가기</a></p>
+</body>
+</html>
